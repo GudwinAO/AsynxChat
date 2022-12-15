@@ -1,0 +1,18 @@
+{
+    "orders": [
+        {
+            "item": "Aleksandr Pyshkin – Stihi",
+            "quantity": "1",
+            "price": "535",
+            "buyer": "Osipov",
+            "date": "01.10.2001"
+        },
+        {
+            "item": "Kipling Stories",
+            "quantity": "1",
+            "price": "300",
+            "buyer": "Osipov",
+            "date": "02.09.2005"
+        }
+    ]
+}
