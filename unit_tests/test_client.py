@@ -1,59 +1,36 @@
-# 1. Для всех функций из урока 3 написать тесты с использованием unittest. Они должны быть
-# оформлены в отдельных скриптах с префиксом test_ в имени файла (например, test_client.py)
+"""Unit-тесты клиента"""
 
-import unittest
-import os
 import sys
-sys.path.append(os.path.join(os.getcwd(),".."))
+import os
+import unittest
+sys.path.append(os.path.join(os.getcwd(), '..'))
+from common.variables import RESPONSE, ERROR, USER, ACCOUNT_NAME, TIME, ACTION, PRESENCE
 from client import create_presence, process_ans
-from common import RESPONSE, ERROR, USER, ACCOUNT_NAME, TIME, ACTION, PRESENCE
 
 class TestClass(unittest.TestCase):
-    
+    '''
+    Класс с тестами
+    '''
 
-    def test_create_presence_type_dict(self):
-        self.assertIsInstance(create_presence(), dict)
+    def test_def_presense(self):
+        """Тест коректного запроса"""
+        test = create_presence()
+        test[TIME] = 1.1  # время необходимо приравнять принудительно
+                          # иначе тест никогда не будет пройден
+        self.assertEqual(test, {ACTION: PRESENCE, TIME: 1.1, USER: {ACCOUNT_NAME: 'Guest'}})
 
-    def test_create_presence(self):
-        test_presence = create_presence()
+    def test_200_ans(self):
+        """Тест корректтного разбора ответа 200"""
+        self.assertEqual(process_ans({RESPONSE: 200}), '200 : OK')
 
-        # меняем время на постоянное для теста
-        test_presence[TIME] = 999
+    def test_400_ans(self):
+        """Тест корректного разбора 400"""
+        self.assertEqual(process_ans({RESPONSE: 400, ERROR: 'Bad Request'}), '400 : Bad Request')
 
-        self.assertEqual(test_presence,
-                         {
-                             ACTION: PRESENCE,
-                             TIME: 999,
-                             USER: {
-                                 ACCOUNT_NAME: 'Guest'
-                                }
-                         }
-                        )
-
-    def test_create_presence_user_type_dict(self):
-        test_presence = create_presence()
-        self.assertIsInstance(test_presence['user'], dict)
-
-    def test_create_presence_num_keys(self):
-        test_presence = create_presence()
-        self.assertEqual(len(test_presence.keys()), 4)
-
-
-    def test_process_ans_200(self):
-        self.assertEqual(process_ans({RESPONSE:200}), '200 : OK')
-
-    def test_process_ans_400(self):
-        self.assertEqual(process_ans({RESPONSE:400, ERROR: 'Bad Request'}), '400 : Bad Request')
-      
-     
     def test_no_response(self):
+        """Тест исключения без поля RESPONSE"""
         self.assertRaises(ValueError, process_ans, {ERROR: 'Bad Request'})
 
 
 if __name__ == '__main__':
     unittest.main()
-
-
-    
-
-    

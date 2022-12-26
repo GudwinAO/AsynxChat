@@ -74,8 +74,7 @@ class Tests(unittest.TestCase):
         # сравниваем результат довренного кодирования и результат от тестируемой функции
         self.assertEqual(test_socket.encoded_message, test_socket.receved_message)
         # дополнительно, проверим генерацию исключения, при не словаре на входе.
-        with self.assertRaises(Exception):
-            send_message(test_socket, test_socket)
+        self.assertRaises(TypeError, send_message, test_socket, 1111)
 
     def test_get_message(self):
         """

@@ -21,3 +21,5 @@ ACCOUNT_NAME = 'account_name'
 PRESENCE = 'presence'
 RESPONSE = 'response'
 ERROR = 'error'
+
+LOGGING_LEVEL = 'INFO'
