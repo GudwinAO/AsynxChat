@@ -45,11 +45,11 @@ class Launcher:
 
     def start(self):
         self.processes.append(subprocess.Popen(f'python server.py -p {self.port.get()} -a {self.host.get()}',
-                                               creationflags=subprocess.CREATE_NEW_CONSOLE))
+                                               shell=True))
 
         for i in range(int(self.clients.get())):
             self.processes.append(subprocess.Popen(f'python client.py {self.host.get()} {self.port.get()} -n test{i + 1}',
-                                                   creationflags=subprocess.CREATE_NEW_CONSOLE))
+                                                   shell=True))
 
     def stop(self):
         while self.processes:
