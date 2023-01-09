@@ -36,7 +36,7 @@ def host_ping(list_ip_addresses, timeout=500, requests=1):
         # хотя можно преобразовать доменное имя к ip-адресу
         except ValueError:
             pass
-        proc = Popen(f"ping {address} -w {timeout} -n {requests}", shell=True, stdout=PIPE)
+        proc = Popen(f"ping {address} -w {timeout} -n {requests}", shell=False, stdout=PIPE)
         proc.wait()
         # проверяем код завершения подпроцесса
         if proc.returncode == 0:
@@ -60,4 +60,5 @@ yandex.ru - Узел доступен
 2.2.2.2 - Узел недоступен
 192.168.0.100 - Узел доступен
 192.168.0.101 - Узел недоступен
+google.com - Узел доступен
 """
