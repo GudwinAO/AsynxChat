@@ -1,5 +1,4 @@
-"""Ошибки"""
-
+"""Class exception"""
 
 class IncorrectDataRecivedError(Exception):
     """Исключение  - некорректные данные получены от сокета"""

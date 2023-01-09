@@ -2,7 +2,7 @@
 
 import subprocess
 
-PROCESS = []
+PROCESSES = []
 
 while True:
     ACTION = input('Выберите действие: q - выход, '
@@ -10,16 +10,18 @@ while True:
 
     if ACTION == 'q':
         break
+
     elif ACTION == 's':
-        PROCESS.append(subprocess.Popen('python server.py',
-                                         shell=True))
-        for i in range(2):
-            PROCESS.append(subprocess.Popen('python client.py -m send',
-                                             shell=True))
-        for i in range(5):
-            PROCESS.append(subprocess.Popen('python client.py -m listen',
-                                            shell=True))
+        PROCESSES.append(subprocess.Popen('python server.py',
+                                          shell=True))
+        PROCESSES.append(subprocess.Popen('python client.py -n test1',
+                                          shell=True))
+        PROCESSES.append(subprocess.Popen('python client.py -n test2',
+                                          shell=True))
+        PROCESSES.append(subprocess.Popen('python client.py -n test3',
+                                          shell=True))
+
     elif ACTION == 'x':
-        while PROCESS:
-            VICTIM = PROCESS.pop()
+        while PROCESSES:
+            VICTIM = PROCESSES.pop()
             VICTIM.kill()
