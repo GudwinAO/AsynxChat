@@ -1,9 +1,7 @@
-"""Константы"""
-
 import logging
 
 # Порт поумолчанию для сетевого ваимодействия
-DEFAULT_PORT = 7777
+DEFAULT_PORT = 70000
 # IP адрес по умолчанию для подключения клиента
 DEFAULT_IP_ADDRESS = '127.0.0.1'
 # Максимальная очередь подключений
@@ -36,6 +34,7 @@ EXIT = 'exit'
 RESPONSE_200 = {RESPONSE: 200}
 # 400
 RESPONSE_400 = {
-    RESPONSE: 400,
-    ERROR: None
-}
+            RESPONSE: 400,
+            ERROR: None
+        }
+

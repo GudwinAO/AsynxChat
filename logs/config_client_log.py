@@ -1,34 +1,32 @@
-"""Кофнфиг клиентского логгера"""
-
 import sys
 import os
+sys.path.append('../')
 import logging
 from common.variables import LOGGING_LEVEL
-sys.path.append('../')
 
 # создаём формировщик логов (formatter):
-CLIENT_FORMATTER = logging.Formatter('%(asctime)s %(levelname)s %(filename)s %(message)s')
+client_formatter = logging.Formatter('%(asctime)s %(levelname)s %(filename)s %(message)s')
 
 # Подготовка имени файла для логирования
-PATH = os.path.dirname(os.path.abspath(__file__))
-PATH = os.path.join(PATH, 'client.log')
+path = os.path.dirname(os.path.abspath(__file__))
+path = os.path.join(path, 'client.log')
 
 # создаём потоки вывода логов
-STREAM_HANDLER = logging.StreamHandler(sys.stderr)
-STREAM_HANDLER.setFormatter(CLIENT_FORMATTER)
-STREAM_HANDLER.setLevel(logging.ERROR)
-LOG_FILE = logging.FileHandler(PATH, encoding='utf8')
-LOG_FILE.setFormatter(CLIENT_FORMATTER)
+steam = logging.StreamHandler(sys.stderr)
+steam.setFormatter(client_formatter)
+steam.setLevel(logging.ERROR)
+log_file = logging.FileHandler(path, encoding='utf8')
+log_file.setFormatter(client_formatter)
 
 # создаём регистратор и настраиваем его
-LOGGER = logging.getLogger('client')
-LOGGER.addHandler(STREAM_HANDLER)
-LOGGER.addHandler(LOG_FILE)
-LOGGER.setLevel(LOGGING_LEVEL)
+logger = logging.getLogger('client')
+logger.addHandler(steam)
+logger.addHandler(log_file)
+logger.setLevel(LOGGING_LEVEL)
 
 # отладка
 if __name__ == '__main__':
-    LOGGER.critical('Критическая ошибка')
-    LOGGER.error('Ошибка')
-    LOGGER.debug('Отладочная информация')
-    LOGGER.info('Информационное сообщение')
+    logger.critical('Test critical event')
+    logger.error('Test error ivent')
+    logger.debug('Test debug ivent')
+    logger.info('Test info ivent')
