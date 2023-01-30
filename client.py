@@ -2,7 +2,6 @@ import sys
 import json
 import socket
 import time
-import dis
 import argparse
 import logging
 import threading
