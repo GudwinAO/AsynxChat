@@ -9,10 +9,9 @@ import time
 import threading
 import configparser
 import logs.config_server_log
-from errors import IncorrectDataRecivedError
 from common.variables import *
 from common.utils import *
-from decos import log
+from common.decos import log
 from descryptors import Port
 from metaclasses import ServerMaker
 from server_database import ServerStorage
@@ -24,8 +23,7 @@ from PyQt5.QtGui import QStandardItemModel, QStandardItem
 # Инициализация логирования сервера.
 logger = logging.getLogger('server')
 
-# Флаг что был подключён новый пользователь, нужен чтобы не мучать BD
-# постоянными запросами на обновление
+# Флаг что был подключён новый пользователь, нужен чтобы не мучать BD постоянными запросами на обновление
 new_connection = False
 conflag_lock = threading.Lock()
 
@@ -80,6 +78,7 @@ class Server(threading.Thread, metaclass=ServerMaker):
 
     def run(self):
         # Инициализация Сокета
+        global new_connection
         self.init_socket()
 
         # Основной цикл программы сервера
@@ -99,8 +98,7 @@ class Server(threading.Thread, metaclass=ServerMaker):
             # Проверяем на наличие ждущих клиентов
             try:
                 if self.clients:
-                    recv_data_lst, send_data_lst, err_lst = select.select(
-                        self.clients, self.clients, [], 0)
+                    recv_data_lst, send_data_lst, err_lst = select.select(self.clients, self.clients, [], 0)
             except OSError as err:
                 logger.error(f'Ошибка работы с сокетами: {err}')
 
@@ -108,40 +106,38 @@ class Server(threading.Thread, metaclass=ServerMaker):
             if recv_data_lst:
                 for client_with_message in recv_data_lst:
                     try:
-                        self.process_client_message(
-                            get_message(client_with_message), client_with_message)
+                        self.process_client_message(get_message(client_with_message), client_with_message)
                     except (OSError):
-                        # Ищем клиента в словаре клиентов и удаляем его из него
-                        # и  базы подключённых
-                        logger.info(
-                            f'Клиент {client_with_message.getpeername()} отключился от сервера.')
+                        # Ищем клиента в словаре клиентов и удаляем его из него и  базы подключённых
+                        logger.info(f'Клиент {client_with_message.getpeername()} отключился от сервера.')
                         for name in self.names:
                             if self.names[name] == client_with_message:
                                 self.database.user_logout(name)
                                 del self.names[name]
                                 break
                         self.clients.remove(client_with_message)
+                        with conflag_lock:
+                            new_connection = True
 
             # Если есть сообщения, обрабатываем каждое.
             for message in self.messages:
                 try:
                     self.process_message(message, send_data_lst)
                 except (ConnectionAbortedError, ConnectionError, ConnectionResetError, ConnectionRefusedError):
-                    logger.info(
-                        f'Связь с клиентом с именем {message[DESTINATION]} была потеряна')
+                    logger.info(f'Связь с клиентом с именем {message[DESTINATION]} была потеряна')
                     self.clients.remove(self.names[message[DESTINATION]])
                     self.database.user_logout(message[DESTINATION])
                     del self.names[message[DESTINATION]]
+                    with conflag_lock:
+                        new_connection = True
             self.messages.clear()
 
     # Функция адресной отправки сообщения определённому клиенту. Принимает словарь сообщение, список зарегистрированых
     # пользователей и слушающие сокеты. Ничего не возвращает.
     def process_message(self, message, listen_socks):
-        if message[DESTINATION] in self.names and self.names[message[DESTINATION]
-                                                             ] in listen_socks:
+        if message[DESTINATION] in self.names and self.names[message[DESTINATION]] in listen_socks:
             send_message(self.names[message[DESTINATION]], message)
-            logger.info(
-                f'Отправлено сообщение пользователю {message[DESTINATION]} от пользователя {message[SENDER]}.')
+            logger.info(f'Отправлено сообщение пользователю {message[DESTINATION]} от пользователя {message[SENDER]}.')
         elif message[DESTINATION] in self.names and self.names[message[DESTINATION]] not in listen_socks:
             raise ConnectionError
         else:
@@ -156,13 +152,11 @@ class Server(threading.Thread, metaclass=ServerMaker):
 
         # Если это сообщение о присутствии, принимаем и отвечаем
         if ACTION in message and message[ACTION] == PRESENCE and TIME in message and USER in message:
-            # Если такой пользователь ещё не зарегистрирован, регистрируем,
-            # иначе отправляем ответ и завершаем соединение.
+            # Если такой пользователь ещё не зарегистрирован, регистрируем, иначе отправляем ответ и завершаем соединение.
             if message[USER][ACCOUNT_NAME] not in self.names.keys():
                 self.names[message[USER][ACCOUNT_NAME]] = client
                 client_ip, client_port = client.getpeername()
-                self.database.user_login(
-                    message[USER][ACCOUNT_NAME], client_ip, client_port)
+                self.database.user_login(message[USER][ACCOUNT_NAME], client_ip, client_port)
                 send_message(client, RESPONSE_200)
                 with conflag_lock:
                     new_connection = True
@@ -174,21 +168,24 @@ class Server(threading.Thread, metaclass=ServerMaker):
                 client.close()
             return
 
-        # Если это сообщение, то добавляем его в очередь сообщений. Ответ не
-        # требуется.
+        # Если это сообщение, то добавляем его в очередь сообщений. проверяем наличие в сети. и отвечаем.
         elif ACTION in message and message[ACTION] == MESSAGE and DESTINATION in message and TIME in message \
                 and SENDER in message and MESSAGE_TEXT in message and self.names[message[SENDER]] == client:
-            self.messages.append(message)
-            self.database.process_message(
-                message[SENDER], message[DESTINATION])
+            if message[DESTINATION] in self.names:
+                self.messages.append(message)
+                self.database.process_message(message[SENDER], message[DESTINATION])
+                send_message(client, RESPONSE_200)
+            else:
+                response = RESPONSE_400
+                response[ERROR] = 'Пользователь не зарегистрирован на сервере.'
+                send_message(client, response)
             return
 
         # Если клиент выходит
         elif ACTION in message and message[ACTION] == EXIT and ACCOUNT_NAME in message \
                 and self.names[message[ACCOUNT_NAME]] == client:
             self.database.user_logout(message[ACCOUNT_NAME])
-            logger.info(
-                f'Клиент {message[ACCOUNT_NAME]} корректно отключился от сервера.')
+            logger.info(f'Клиент {message[ACCOUNT_NAME]} корректно отключился от сервера.')
             self.clients.remove(self.names[message[ACCOUNT_NAME]])
             self.names[message[ACCOUNT_NAME]].close()
             del self.names[message[ACCOUNT_NAME]]
@@ -219,8 +216,7 @@ class Server(threading.Thread, metaclass=ServerMaker):
         elif ACTION in message and message[ACTION] == USERS_REQUEST and ACCOUNT_NAME in message \
                 and self.names[message[ACCOUNT_NAME]] == client:
             response = RESPONSE_202
-            response[LIST_INFO] = [user[0]
-                                   for user in self.database.users_list()]
+            response[LIST_INFO] = [user[0] for user in self.database.users_list()]
             send_message(client, response)
 
         # Иначе отдаём Bad request
@@ -231,23 +227,32 @@ class Server(threading.Thread, metaclass=ServerMaker):
             return
 
 
-def main():
-    # Загрузка файла конфигурации сервера
+# Загрузка файла конфигурации
+def config_load():
     config = configparser.ConfigParser()
-
     dir_path = os.path.dirname(os.path.realpath(__file__))
     config.read(f"{dir_path}/{'server.ini'}")
+    # Если конфиг файл загружен правильно, запускаемся, иначе конфиг по умолчанию.
+    if 'SETTINGS' in config:
+        return config
+    else:
+        config.add_section('SETTINGS')
+        config.set('SETTINGS', 'Default_port', str(DEFAULT_PORT))
+        config.set('SETTINGS', 'Listen_Address', '')
+        config.set('SETTINGS', 'Database_path', '')
+        config.set('SETTINGS', 'Database_file', 'server_database.db3')
+        return config
 
-    # Загрузка параметров командной строки, если нет параметров, то задаём
-    # значения по умоланию.
-    listen_address, listen_port = arg_parser(
-        config['SETTINGS']['Default_port'], config['SETTINGS']['Listen_Address'])
+
+def main():
+    # Загрузка файла конфигурации сервера
+    config = config_load()
+
+    # Загрузка параметров командной строки, если нет параметров, то задаём значения по умоланию.
+    listen_address, listen_port = arg_parser(config['SETTINGS']['Default_port'], config['SETTINGS']['Listen_Address'])
 
     # Инициализация базы данных
-    database = ServerStorage(
-        os.path.join(
-            config['SETTINGS']['Database_path'],
-            config['SETTINGS']['Database_file']))
+    database = ServerStorage(os.path.join(config['SETTINGS']['Database_path'], config['SETTINGS']['Database_file']))
 
     # Создание экземпляра класса - сервера и его запуск:
     server = Server(listen_address, listen_port, database)
@@ -264,13 +269,11 @@ def main():
     main_window.active_clients_table.resizeColumnsToContents()
     main_window.active_clients_table.resizeRowsToContents()
 
-    # Функция обновляющяя список подключённых, проверяет флаг подключения, и
-    # если надо обновляет список
+    # Функция обновляющяя список подключённых, проверяет флаг подключения, и если надо обновляет список
     def list_update():
         global new_connection
         if new_connection:
-            main_window.active_clients_table.setModel(
-                gui_create_model(database))
+            main_window.active_clients_table.setModel(gui_create_model(database))
             main_window.active_clients_table.resizeColumnsToContents()
             main_window.active_clients_table.resizeRowsToContents()
             with conflag_lock:
@@ -310,16 +313,12 @@ def main():
             config['SETTINGS']['Listen_Address'] = config_window.ip.text()
             if 1023 < port < 65536:
                 config['SETTINGS']['Default_port'] = str(port)
-                print(port)
-                with open('server.ini', 'w') as conf:
+                dir_path = os.path.dirname(os.path.realpath(__file__))
+                with open(f"{dir_path}/{'server.ini'}", 'w') as conf:
                     config.write(conf)
-                    message.information(
-                        config_window, 'OK', 'Настройки успешно сохранены!')
+                    message.information(config_window, 'OK', 'Настройки успешно сохранены!')
             else:
-                message.warning(
-                    config_window,
-                    'Ошибка',
-                    'Порт должен быть от 1024 до 65536')
+                message.warning(config_window, 'Ошибка', 'Порт должен быть от 1024 до 65536')
 
     # Таймер, обновляющий список клиентов 1 раз в секунду
     timer = QTimer()

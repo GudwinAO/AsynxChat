@@ -39,7 +39,6 @@ USERS_REQUEST = 'get_users'
 # Словари - ответы:
 # 200
 RESPONSE_200 = {RESPONSE: 200}
-
 # 202
 RESPONSE_202 = {RESPONSE: 202,
                 LIST_INFO:None
