@@ -3917,3 +3917,49 @@ om': 'test2', 'to': 'test1', 'time': 1564512031.3072023, 'mess_text': 'Как д
 2023-02-06 16:08:07,276 DEBUG transport.py Транспорт завершает работу.
 2023-02-06 16:08:07,774 DEBUG decos.py Была вызвана функция send_message c параметрами (<socket.socket fd=22, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58558), raddr=('127.0.0.1', 7777)>, {'action': 'exit', 'time': 1675685287.7086825, 'account_name': 'User2'}) , {}. Вызов из модуля common.utils
 2023-02-06 16:08:07,774 DEBUG transport.py Транспорт завершает работу.
+2023-02-09 17:39:35,627 DEBUG decos.py Была вызвана функция arg_parser c параметрами () , {}. Вызов из модуля __main__
+2023-02-09 17:39:35,628 DEBUG client.py Args loaded
+2023-02-09 17:39:47,783 DEBUG client.py Using USERNAME = User, PASSWD = User.
+2023-02-09 17:39:47,783 INFO client.py Запущен клиент с парамертами: адрес сервера: 127.0.0.1 , порт: 7777, имя пользователя: User
+2023-02-09 17:40:46,699 DEBUG decos.py Была вызвана функция arg_parser c параметрами () , {}. Вызов из модуля __main__
+2023-02-09 17:40:46,700 DEBUG client.py Args loaded
+2023-02-09 17:40:53,350 DEBUG client.py Using USERNAME = user, PASSWD = user.
+2023-02-09 17:40:53,350 INFO client.py Запущен клиент с парамертами: адрес сервера: 127.0.0.1 , порт: 7777, имя пользователя: user
+2023-02-09 17:40:53,743 DEBUG client.py Keys sucsessfully loaded.
+2023-02-09 17:40:53,757 INFO transport.py Попытка подключения №1
+2023-02-09 17:40:53,757 DEBUG transport.py Connection established.
+2023-02-09 17:40:53,757 DEBUG transport.py Starting auth dialog.
+2023-02-09 17:40:53,763 DEBUG transport.py Passwd hash ready: b'7cf3d89a2ca56de41401056eca13d2a07f6253f2abf53b1987a8a22e8769a9b9fa73fb4ed8c6933c65d8c6ca6a67bf02380d21b3a0287d389751e59dd670a96a'
+2023-02-09 17:40:53,764 DEBUG transport.py Presense message = {'action': 'presence', 'time': 1675950053.7643473, 'user': {'account_name': 'user', 'pubkey': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAo+7MVkof82jUUjpcjOu/\nhduzI+0bK4vVzBG2zlpduodL7Psl06/tss5aQl40ogAM8yLVv4JT0mTRTeRQStQG\nRmu81ztnO94k0M0V7E8uKOF/ylC1rePUvPyg/v6+v7KJP+3lo3AWKFN5zzbAdZ5h\nXvgJXD2O74emuGDhOpasVG5hQBf/88gDhfvrADhn2v2FX7Yyp3LwOi2A8x7plsv2\nf8ydhu3vMbLAJttqZdVvCcPdRxxthTwU54zl+iKsVDUf0bDOoPGdFtcSFT2J+dc+\nsl3P9ZuCcRgeh8E6ILMI0r5SRd7PYc0lSeK+BJZ0wd+ggr4XTcnxD4JX/49foeMM\nsQIDAQAB\n-----END PUBLIC KEY-----'}}
+2023-02-09 17:40:53,764 DEBUG decos.py Была вызвана функция send_message c параметрами (<socket.socket fd=22, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58362), raddr=('127.0.0.1', 7777)>, {'action': 'presence', 'time': 1675950053.7643473, 'user': {'account_name': 'user', 'pubkey': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAo+7MVkof82jUUjpcjOu/\nhduzI+0bK4vVzBG2zlpduodL7Psl06/tss5aQl40ogAM8yLVv4JT0mTRTeRQStQG\nRmu81ztnO94k0M0V7E8uKOF/ylC1rePUvPyg/v6+v7KJP+3lo3AWKFN5zzbAdZ5h\nXvgJXD2O74emuGDhOpasVG5hQBf/88gDhfvrADhn2v2FX7Yyp3LwOi2A8x7plsv2\nf8ydhu3vMbLAJttqZdVvCcPdRxxthTwU54zl+iKsVDUf0bDOoPGdFtcSFT2J+dc+\nsl3P9ZuCcRgeh8E6ILMI0r5SRd7PYc0lSeK+BJZ0wd+ggr4XTcnxD4JX/49foeMM\nsQIDAQAB\n-----END PUBLIC KEY-----'}}) , {}. Вызов из модуля common.utils
+2023-02-09 17:40:53,764 DEBUG decos.py Была вызвана функция get_message c параметрами (<socket.socket fd=22, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58362), raddr=('127.0.0.1', 7777)>,) , {}. Вызов из модуля common.utils
+2023-02-09 17:40:58,768 DEBUG transport.py Connection error.
+Traceback (most recent call last):
+  File "/home/alelksandr/Desktop/AsynxChat/AsynxChat/client/transport.py", line 119, in connection_init
+    ans = get_message(self.transport)
+  File "/home/alelksandr/Desktop/AsynxChat/AsynxChat/common/decos.py", line 29, in log_saver
+    ret = func_to_log(*args, **kwargs)
+  File "/home/alelksandr/Desktop/AsynxChat/AsynxChat/common/utils.py", line 11, in get_message
+    encoded_response = client.recv(MAX_PACKAGE_LENGTH)
+TimeoutError: timed out
+2023-02-09 17:42:37,949 DEBUG decos.py Была вызвана функция arg_parser c параметрами () , {}. Вызов из модуля __main__
+2023-02-09 17:42:37,949 DEBUG client.py Args loaded
+2023-02-09 17:42:44,839 DEBUG client.py Using USERNAME = User, PASSWD = USer.
+2023-02-09 17:42:44,839 INFO client.py Запущен клиент с парамертами: адрес сервера: 127.0.0.1 , порт: 7777, имя пользователя: User
+2023-02-09 17:42:44,881 DEBUG client.py Keys sucsessfully loaded.
+2023-02-09 17:42:44,894 INFO transport.py Попытка подключения №1
+2023-02-09 17:42:44,895 DEBUG transport.py Connection established.
+2023-02-09 17:42:44,895 DEBUG transport.py Starting auth dialog.
+2023-02-09 17:42:44,901 DEBUG transport.py Passwd hash ready: b'2823afe8bdbc15f24863ddd29dcccf31200e691c401bacaff645f822c2071e7403a9f42d2962511c6203b71999485fcef3e2cc8809c96001eebab8bf63197584'
+2023-02-09 17:42:44,901 DEBUG transport.py Presense message = {'action': 'presence', 'time': 1675950164.9019127, 'user': {'account_name': 'User', 'pubkey': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1b8NOB9pqlN6xEnUx8W8\nXfU3vnpPh55ap2eTSJjSxwX4DNUO4FT0dPI8PbBq+WfvEjVLpZJJ/5NVS0ETPvLj\npNE6yobgIYBlBFBPjyHCV+Sstv94JsOb6d3qxJpZRpBLXY8pjLouYadsgDAyTyGk\n1Y8O6ucjjA5aWtVTmp/0mr6cuFzrWsiDmRNOPiui/NyeoW9BydSQvPjFYMFll0EJ\nTwq6GJlirIbJa0DKoB6E6C8GtXn48Gvmb+6fV0UkaJuG8idt1iaKNn/br5BcDrN5\n2nya4B/4c2euyuqwDx7n1O0jHkNWLRMLZfAurRFL2Hd32SMS9ORfh0LM/sm2rYU4\nTQIDAQAB\n-----END PUBLIC KEY-----'}}
+2023-02-09 17:42:44,902 DEBUG decos.py Была вызвана функция send_message c параметрами (<socket.socket fd=22, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 52352), raddr=('127.0.0.1', 7777)>, {'action': 'presence', 'time': 1675950164.9019127, 'user': {'account_name': 'User', 'pubkey': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1b8NOB9pqlN6xEnUx8W8\nXfU3vnpPh55ap2eTSJjSxwX4DNUO4FT0dPI8PbBq+WfvEjVLpZJJ/5NVS0ETPvLj\npNE6yobgIYBlBFBPjyHCV+Sstv94JsOb6d3qxJpZRpBLXY8pjLouYadsgDAyTyGk\n1Y8O6ucjjA5aWtVTmp/0mr6cuFzrWsiDmRNOPiui/NyeoW9BydSQvPjFYMFll0EJ\nTwq6GJlirIbJa0DKoB6E6C8GtXn48Gvmb+6fV0UkaJuG8idt1iaKNn/br5BcDrN5\n2nya4B/4c2euyuqwDx7n1O0jHkNWLRMLZfAurRFL2Hd32SMS9ORfh0LM/sm2rYU4\nTQIDAQAB\n-----END PUBLIC KEY-----'}}) , {}. Вызов из модуля common.utils
+2023-02-09 17:42:44,902 DEBUG decos.py Была вызвана функция get_message c параметрами (<socket.socket fd=22, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 52352), raddr=('127.0.0.1', 7777)>,) , {}. Вызов из модуля common.utils
+2023-02-09 17:42:49,907 DEBUG transport.py Connection error.
+Traceback (most recent call last):
+  File "/home/alelksandr/Desktop/AsynxChat/AsynxChat/client/transport.py", line 119, in connection_init
+    ans = get_message(self.transport)
+  File "/home/alelksandr/Desktop/AsynxChat/AsynxChat/common/decos.py", line 29, in log_saver
+    ret = func_to_log(*args, **kwargs)
+  File "/home/alelksandr/Desktop/AsynxChat/AsynxChat/common/utils.py", line 11, in get_message
+    encoded_response = client.recv(MAX_PACKAGE_LENGTH)
+TimeoutError: timed out

@@ -2,9 +2,9 @@ import logging
 import logs.config_client_log
 import argparse
 import sys
-from PyQt5.QtWidgets import QApplication
+import os
 from Cryptodome.PublicKey import RSA
-
+from PyQt5.QtWidgets import QApplication, QMessageBox
 
 from common.variables import *
 from common.errors import ServerError
@@ -13,7 +13,6 @@ from client.database import ClientDatabase
 from client.transport import ClientTransport
 from client.main_window import ClientMainWindow
 from client.start_dialog import UserNameDialog
-
 # Инициализация клиентского логера
 logger = logging.getLogger('client')
 
