@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QMainWindow, qApp, QMessageBox, QApplication, QListView
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QBrush, QColor
 from PyQt5.QtCore import pyqtSlot, QEvent, Qt
-from Cryptodome.Cipher import PKCS1_OAEP
-from Cryptodome.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+from Crypto.PublicKey import RSA
 import json
 import logging
 import base64
