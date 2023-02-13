@@ -37,8 +37,11 @@ class ClientDatabase:
         # иначе sqlite3.ProgrammingError
         path = os.path.dirname(os.path.realpath(__file__))
         filename = f'client_{name}.db3'
-        self.database_engine = create_engine(f'sqlite:///{os.path.join(path, filename)}', echo=False, pool_recycle=7200,
-                                             connect_args={'check_same_thread': False})
+        self.database_engine = create_engine(f'sqlite:///{os.path.join(path, filename)}', 
+            echo=False, 
+            pool_recycle=7200,
+            connect_args=
+                {'check_same_thread': False})
 
         # Создаём объект MetaData
         self.metadata = MetaData()
@@ -82,11 +85,19 @@ class ClientDatabase:
 
     # Функция добавления контактов
     def add_contact(self, contact):
-        if not self.session.query(self.Contacts).filter_by(name=contact).count():
+        if not self.session.query(
+                self.Contacts).filter_by(
+                name=contact).count():
             contact_row = self.Contacts(contact)
             self.session.add(contact_row)
             self.session.commit()
 
+
+    #Метод очищающий таблицу со списком контактов.
+    def contacts_clear(self):
+        self.session.query(self.Contacts).delete()
+
+   
     # Функция удаления контакта
     def del_contact(self, contact):
         self.session.query(self.Contacts).filter_by(name=contact).delete()
@@ -108,15 +119,19 @@ class ClientDatabase:
 
     # Функция возвращающяя контакты
     def get_contacts(self):
-        return [contact[0] for contact in self.session.query(self.Contacts.name).all()]
+        return [contact[0] 
+                for contact in self.session.query(self.Contacts.name).all()]
 
     # Функция возвращающяя список известных пользователей
     def get_users(self):
-        return [user[0] for user in self.session.query(self.KnownUsers.username).all()]
+        return [user[0] 
+                for user in self.session.query(self.KnownUsers.username).all()]
 
     # Функция проверяющяя наличие пользователя в известных
     def check_user(self, user):
-        if self.session.query(self.KnownUsers).filter_by(username=user).count():
+        if self.session.query(
+                self.KnownUsers).filter_by(
+                username=user).count():
             return True
         else:
             return False

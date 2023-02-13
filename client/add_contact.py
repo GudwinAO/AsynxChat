@@ -11,6 +11,7 @@ logger = logging.getLogger('client')
 
 # Диалог выбора контакта для добавления
 class AddContactDialog(QDialog):
+    
     def __init__(self, transport, database):
         super().__init__()
         self.transport = transport
