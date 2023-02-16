@@ -6,13 +6,13 @@ build_exe_options = {
 }
 setup(
     name="mess_server",
-    version="0.8.8",
+    version="0.1.0",
     description="mess_server",
     options={
         "build_exe": build_exe_options
     },
-    executables=[Executable('server_.py',
-                            # base='Win32GUI',
+    executables=[Executable('server.py',
+                            #base='Win32GUI',
                             targetName='server.exe',
                             )]
 )
