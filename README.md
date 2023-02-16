@@ -1,2 +1,0 @@
-# AsynxChat
-For lessons GB
