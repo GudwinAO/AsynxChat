@@ -79,7 +79,6 @@ class ClientTransport(threading.Thread, QObject):
                 pass
             else:
                 connected = True
-                logger.debug("Connection established.")
                 break
             time.sleep(1)
 
@@ -88,7 +87,7 @@ class ClientTransport(threading.Thread, QObject):
             logger.critical('Не удалось установить соединение с сервером')
             raise ServerError('Не удалось установить соединение с сервером')
 
-        logger.debug('Starting auth dialog.')
+        logger.debug('Установлено соединение с сервером')
 
         # Запускаем процедуру авторизации
         # Получаем хэш пароля
@@ -96,8 +95,6 @@ class ClientTransport(threading.Thread, QObject):
         salt = self.username.lower().encode('utf-8')
         passwd_hash = hashlib.pbkdf2_hmac('sha512', passwd_bytes, salt, 10000)
         passwd_hash_string = binascii.hexlify(passwd_hash)
-
-        logger.debug(f'Passwd hash ready: {passwd_hash_string}')
 
         # Получаем публичный ключ и декодируем его из байтов
         pubkey = self.keys.publickey().export_key().decode('ascii')
@@ -112,12 +109,10 @@ class ClientTransport(threading.Thread, QObject):
                     PUBLIC_KEY: pubkey
                 }
             }
-            logger.debug(f"Presense message = {presense}")
             # Отправляем серверу приветственное сообщение.
             try:
                 send_message(self.transport, presense)
                 ans = get_message(self.transport)
-                logger.debug(f'Server response = {ans}.')
                 # Если сервер вернул ошибку, бросаем исключение.
                 if RESPONSE in ans:
                     if ans[RESPONSE] == 400:
@@ -126,15 +121,15 @@ class ClientTransport(threading.Thread, QObject):
                         # Если всё нормально, то продолжаем процедуру
                         # авторизации.
                         ans_data = ans[DATA]
-                        hash = hmac.new(passwd_hash_string, ans_data.encode('utf-8'), 'MD5')
+                        hash = hmac.new(
+                            passwd_hash_string, ans_data.encode('utf-8'))
                         digest = hash.digest()
                         my_ans = RESPONSE_511
                         my_ans[DATA] = binascii.b2a_base64(
                             digest).decode('ascii')
                         send_message(self.transport, my_ans)
                         self.process_server_ans(get_message(self.transport))
-            except (OSError, json.JSONDecodeError) as err:
-                logger.debug(f'Connection error.', exc_info=err)
+            except (OSError, json.JSONDecodeError):
                 raise ServerError('Сбой соединения в процессе авторизации.')
 
     def process_server_ans(self, message):
